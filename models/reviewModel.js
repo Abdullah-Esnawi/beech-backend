@@ -50,7 +50,7 @@ reviewSchema.statics.calcAverageRatingsAndQuantity = async function (
     },
   ]);
 
-  // console.log(result);
+  // Update Average Rating Reviews for Product
   if (result.length > 0) {
     await Product.findByIdAndUpdate(productId, {
       ratingsAverage: result[0].avgRatings,

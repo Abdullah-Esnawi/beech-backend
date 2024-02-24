@@ -1,9 +1,9 @@
-const asyncHandler = require('express-async-handler');
-const ApiError = require('../utils/apiError');
+const asyncHandler = require("express-async-handler");
+const ApiResponse = require("../utils/ApiResponse");
 
-const Product = require('../models/productModel');
-const Coupon = require('../models/couponModel');
-const Cart = require('../models/cartModel');
+const Product = require("../models/productModel");
+const Coupon = require("../models/couponModel");
+const Cart = require("../models/cartModel");
 
 const calcTotalCartPrice = (cart) => {
   let totalPrice = 0;
@@ -53,8 +53,8 @@ exports.addProductToCart = asyncHandler(async (req, res, next) => {
   await cart.save();
 
   res.status(200).json({
-    status: 'success',
-    message: 'Product added to cart successfully',
+    status: "success",
+    message: "Product added to cart successfully",
     numOfCartItems: cart.cartItems.length,
     data: cart,
   });
@@ -68,12 +68,15 @@ exports.getLoggedUserCart = asyncHandler(async (req, res, next) => {
 
   if (!cart) {
     return next(
-      new ApiError(`There is no cart for this user id : ${req.user._id}`, 404)
+      new ApiResponse(
+        `There is no cart for this user id : ${req.user._id}`,
+        404
+      )
     );
   }
 
   res.status(200).json({
-    status: 'success',
+    status: "success",
     numOfCartItems: cart.cartItems.length,
     data: cart,
   });
@@ -95,7 +98,7 @@ exports.removeSpecificCartItem = asyncHandler(async (req, res, next) => {
   cart.save();
 
   res.status(200).json({
-    status: 'success',
+    status: "success",
     numOfCartItems: cart.cartItems.length,
     data: cart,
   });
@@ -117,7 +120,9 @@ exports.updateCartItemQuantity = asyncHandler(async (req, res, next) => {
 
   const cart = await Cart.findOne({ user: req.user._id });
   if (!cart) {
-    return next(new ApiError(`there is no cart for user ${req.user._id}`, 404));
+    return next(
+      new ApiResponse(`there is no cart for user ${req.user._id}`, 404)
+    );
   }
 
   const itemIndex = cart.cartItems.findIndex(
@@ -129,7 +134,7 @@ exports.updateCartItemQuantity = asyncHandler(async (req, res, next) => {
     cart.cartItems[itemIndex] = cartItem;
   } else {
     return next(
-      new ApiError(`there is no item for this id :${req.params.itemId}`, 404)
+      new ApiResponse(`there is no item for this id :${req.params.itemId}`, 404)
     );
   }
 
@@ -138,7 +143,7 @@ exports.updateCartItemQuantity = asyncHandler(async (req, res, next) => {
   await cart.save();
 
   res.status(200).json({
-    status: 'success',
+    status: "success",
     numOfCartItems: cart.cartItems.length,
     data: cart,
   });
@@ -155,7 +160,7 @@ exports.applyCoupon = asyncHandler(async (req, res, next) => {
   });
 
   if (!coupon) {
-    return next(new ApiError(`Coupon is invalid or expired`));
+    return next(new ApiResponse(`Coupon is invalid or expired`));
   }
 
   // 2) Get logged user cart to get total cart price
@@ -173,7 +178,7 @@ exports.applyCoupon = asyncHandler(async (req, res, next) => {
   await cart.save();
 
   res.status(200).json({
-    status: 'success',
+    status: "success",
     numOfCartItems: cart.cartItems.length,
     data: cart,
   });
