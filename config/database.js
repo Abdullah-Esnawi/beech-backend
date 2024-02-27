@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const dbConnection = () => {
-  mongoose.set({strictQuery: true})
+  mongoose.set('strictQuery', true)
     .connect(process.env.DB_URI)
     .then((conn) => {
       console.log(`Database Connected: ${conn.connection.host}`);
